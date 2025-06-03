@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bffaflig7buie"
+path="res://.godot/imported/tractor.obj-5469d04f32c418b9d680445625cd3aea.mesh"
+
+[deps]
+
+files=["res://.godot/imported/tractor.obj-5469d04f32c418b9d680445625cd3aea.mesh"]
+
+source_file="res://3DModels/Models/OBJ format/tractor.obj"
+dest_files=["res://.godot/imported/tractor.obj-5469d04f32c418b9d680445625cd3aea.mesh", "res://.godot/imported/tractor.obj-5469d04f32c418b9d680445625cd3aea.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false
