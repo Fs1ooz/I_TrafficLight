@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://ud62vixst0na"]
+
+[ext_resource type="Script" uid="uid://brv3n0s30tj15" path="res://Script/Semaforo3D.gd" id="1_a202f"]
+
+[node name="Semaforo3D" type="Node3D" node_paths=PackedStringArray("red_light", "yellow_light", "green_light")]
+script = ExtResource("1_a202f")
+red_light = NodePath("Rosso3D")
+yellow_light = NodePath("Giallo3D")
+green_light = NodePath("Verde3D")
+
+[node name="Rosso3D" type="OmniLight3D" parent="."]
+light_color = Color(1, 0, 0, 1)
+
+[node name="Giallo3D" type="OmniLight3D" parent="."]
+light_color = Color(0.730695, 0.73599, 0.36445, 1)
+
+[node name="Verde3D" type="OmniLight3D" parent="."]
+light_color = Color(0, 1, 0, 1)

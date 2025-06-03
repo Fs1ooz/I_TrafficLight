@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://ck5kqqngwpxwe"]
+
+[ext_resource type="Script" uid="uid://da2h78oo87fot" path="res://Script/Macchina.gd" id="1_fk50m"]
+[ext_resource type="Texture2D" uid="uid://bfb5a2b5nsy6s" path="res://icon.svg" id="2_af8s8"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_fk50m"]
+
+[node name="Macchina3D" type="CharacterBody3D"]
+script = ExtResource("1_fk50m")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0365489, 0, 0)
+shape = SubResource("SphereShape3D_fk50m")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+texture = ExtResource("2_af8s8")

@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://biawlloxcii7l"]
+
+[ext_resource type="Script" uid="uid://u04y2f8y3bkg" path="res://Script/world.gd" id="1_go701"]
+[ext_resource type="PackedScene" uid="uid://ck5kqqngwpxwe" path="res://Scenes/macchina_3d.tscn" id="2_5a7ea"]
+[ext_resource type="PackedScene" uid="uid://ud62vixst0na" path="res://semaforo_3d.tscn" id="3_5a7ea"]
+
+[node name="World" type="Node3D" node_paths=PackedStringArray("raycast")]
+script = ExtResource("1_go701")
+raycast = NodePath("Infrarossi3D")
+
+[node name="Macchina3D" parent="." instance=ExtResource("2_5a7ea")]
+
+[node name="Infrarossi3D" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 2.03, 0.12, 5.695)
+target_position = Vector3(0, -8.315, 0)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.5931)
+
+[node name="Node3D" parent="." instance=ExtResource("3_5a7ea")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.80322, 0, -0.238442)
+
+[node name="Semaforo3D" parent="." instance=ExtResource("3_5a7ea")]
