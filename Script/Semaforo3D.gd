@@ -4,11 +4,11 @@ extends Node3D
 @export var yellow_light: OmniLight3D
 @export var green_light: OmniLight3D
 
-@export var red_time := 2.0
-@export var yellow_time := 1.0
+@export var red_time := 5.0
+@export var yellow_time := 3.0
 @export var green_time := 2.0
 
-var current_light := "red"
+var current_light := "green"
 
 func _ready():
 	update_lights()
@@ -27,8 +27,6 @@ func start_cycle():
 			current_light = "red"
 	update_lights()
 	start_cycle()
-
-	
 
 func update_lights():
 	red_light.visible = current_light == "red"

@@ -185,7 +185,6 @@ shadow_mesh = SubResource("ArrayMesh_32lqg")
 [sub_resource type="SphereShape3D" id="SphereShape3D_fk50m"]
 
 [node name="Sedan3D" type="CharacterBody3D"]
-transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 script = ExtResource("1_fk50m")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
