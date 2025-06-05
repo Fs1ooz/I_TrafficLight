@@ -1,22 +1,29 @@
 extends Node3D
 
-var vehicle_scene_paths: Array = ["res://Scenes/macchina_3d.tscn"]
-var vehicles: Array = []
+@onready var timer: Timer = $"../Timer"
 
-func _ready() -> void:
-	_spawn_vehicle_timer()
+# Pre-carica le scene a tempo di compilazione (ZERO lag)
+var vehicle_scenes: Array[PackedScene] = [
+	preload("res://Scenes/sedan.tscn"),
+	# Aggiungi altri veicoli qui
+	# preload("res://Scenes/camion_3d.tscn"),
+]
 
-func _spawn_vehicle_timer() -> void:
-	# Crea il timer solo una volta!
-	var timer = get_tree().create_timer(4.0)
-	timer.timeout.connect(_on_spawn_vehicle)
+var next_vehicle: PackedScene = vehicle_scenes[0]
 
-func _on_spawn_vehicle() -> void:
-	var path = vehicle_scene_paths[0]  # Se è solo uno, usa l'indice 0
-	var scene = load(path)
-	var instance = scene.instantiate()
+# Sceglie una scena casuale dai veicoli disponibili
+func pick_random_vehicle() -> void:
+	if vehicle_scenes.size() > 0:
+		next_vehicle = vehicle_scenes[randi() % vehicle_scenes.size()]
+
+# Spawna un veicolo nella scena
+func spawn_vehicle() -> void:
+	pick_random_vehicle()
+	var instance = next_vehicle.instantiate()
+	await get_tree().create_timer(0.1).timeout
 	get_parent().add_child(instance)
-	vehicles.append(instance)
 
-	# Ri-crea il timer per la prossima spawnata
-	_spawn_vehicle_timer()
+# Callback del timer - spawna un veicolo e riavvia il timer
+func _on_timer_timeout() -> void:
+	spawn_vehicle()
+	timer.start()

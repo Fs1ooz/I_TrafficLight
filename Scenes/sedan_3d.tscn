@@ -1,5 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://cbkbbj1a4fa4f"]
-
-[ext_resource type="PackedScene" uid="uid://84khul1bevaw" path="res://3DModels/Models/GLB format/sedan.glb" id="1_dvhyr"]
-
-[node name="Sedan" instance=ExtResource("1_dvhyr")]
