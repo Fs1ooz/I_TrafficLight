@@ -19,10 +19,15 @@ config/icon="res://icon.svg"
 
 VehiclesManager="*res://Scenes/Singletons/vehicles_manager.tscn"
 
+[display]
+
+window/stretch/mode="canvas_items"
+
 [global_group]
 
 "Traffic Lights"=""
 Vehicles=""
+Infrareds=""
 
 [rendering]
 

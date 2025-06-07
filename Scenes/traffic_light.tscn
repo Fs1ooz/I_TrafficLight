@@ -1,12 +1,13 @@
 [gd_scene load_steps=2 format=3 uid="uid://ud62vixst0na"]
 
-[ext_resource type="Script" uid="uid://brv3n0s30tj15" path="res://Script/traffic_light.gd" id="1_a202f"]
+[ext_resource type="Script" uid="uid://cep1f8v8k6y7l" path="res://Script/traffic_lights.gd" id="1_tmwn3"]
 
-[node name="Semaforo3D" type="Node3D" node_paths=PackedStringArray("red_light", "yellow_light", "green_light") groups=["Traffic Lights"]]
-script = ExtResource("1_a202f")
-red_light = NodePath("LuciSemaforo3D/Rosso3D")
-yellow_light = NodePath("LuciSemaforo3D/Giallo3D")
-green_light = NodePath("LuciSemaforo3D/Verde3D")
+[node name="TrafficLight" type="Node3D" node_paths=PackedStringArray("red_light", "yellow_light", "green_light") groups=["Traffic Lights"]]
+script = ExtResource("1_tmwn3")
+red_light = NodePath("TrafficLightColors/Red")
+yellow_light = NodePath("TrafficLightColors/Yellow")
+green_light = NodePath("TrafficLightColors/Green")
+metadata/_custom_type_script = "uid://cep1f8v8k6y7l"
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.99517, -0.106776)
@@ -17,16 +18,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.636521, -0.0992929)
 radius = 0.058
 height = 1.18937
 
-[node name="LuciSemaforo3D" type="Node3D" parent="."]
+[node name="TrafficLightColors" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.51308, 0.179844)
 
-[node name="Rosso3D" type="OmniLight3D" parent="LuciSemaforo3D"]
+[node name="Red" type="OmniLight3D" parent="TrafficLightColors"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 light_color = Color(1, 0, 0, 1)
 
-[node name="Giallo3D" type="OmniLight3D" parent="LuciSemaforo3D"]
+[node name="Yellow" type="OmniLight3D" parent="TrafficLightColors"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 light_color = Color(1, 0.833333, 0, 1)
 
-[node name="Verde3D" type="OmniLight3D" parent="LuciSemaforo3D"]
+[node name="Green" type="OmniLight3D" parent="TrafficLightColors"]
 light_color = Color(0, 1, 0, 1)

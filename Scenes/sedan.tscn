@@ -182,7 +182,7 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_32lqg")
 
-[node name="Sedan3D" type="CharacterBody3D" groups=["Vehicles"]]
+[node name="Sedan" type="CharacterBody3D" groups=["Vehicles"]]
 script = ExtResource("1_bc5v0")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

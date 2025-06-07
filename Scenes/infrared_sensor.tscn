@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://cluflelnki8qp"]
+
+[ext_resource type="Script" uid="uid://c5fa1cpdlcm3r" path="res://Script/infrared_sensor.gd" id="1_uxdkq"]
+
+[node name="InfraredSensor" type="Node3D"]
+transform = Transform3D(-4.37114e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1, -4.37114e-08, 1.91069e-15, 0, 0.5, 0)
+script = ExtResource("1_uxdkq")
+
+[node name="InfraredA" type="RayCast3D" parent="." groups=["Infrareds"]]
+transform = Transform3D(1, 0, 0, 0, 1, -8.35189e-23, 0, -8.35188e-23, 1, 0, 0, 0)
+target_position = Vector3(0, 10, 0)
+
+[node name="InfraredB" type="RayCast3D" parent="." groups=["Infrareds"]]
+transform = Transform3D(1, 0, 0, 0, 1, -8.35189e-23, 0, -8.35188e-23, 1, -0.928957, 4.0606e-08, -1.77495e-15)
+target_position = Vector3(0, 10, 0)
