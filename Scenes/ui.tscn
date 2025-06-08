@@ -1,12 +1,21 @@
-[gd_scene format=3 uid="uid://cvllrjtnyoc0d"]
+[gd_scene load_steps=3 format=3 uid="uid://cvllrjtnyoc0d"]
 
-[node name="UI" type="Control"]
+[ext_resource type="Script" uid="uid://cwnn2pl5bnqqv" path="res://Script/ui.gd" id="1_jxero"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qdvrb"]
+bg_color = Color(0.86, 0.2838, 0.2838, 1)
+
+[node name="UI" type="Control" node_paths=PackedStringArray("left_input", "right_input", "button")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_jxero")
+left_input = NodePath("Panel/VBoxContainer/LineEdit")
+right_input = NodePath("Panel/VBoxContainer2/LineEdit")
+button = NodePath("Panel/Button")
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
@@ -14,7 +23,7 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -51.0
+offset_top = -62.0
 grow_horizontal = 2
 grow_vertical = 0
 
@@ -25,3 +34,41 @@ offset_bottom = 40.0
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
+text = "Macchine da sinistra"
+
+[node name="LineEdit" type="LineEdit" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -159.0
+offset_bottom = 58.0
+grow_horizontal = 0
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer2"]
+layout_mode = 2
+text = "Macchine da destra"
+
+[node name="LineEdit" type="LineEdit" parent="Panel/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Panel"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -24.0
+offset_right = 25.0
+offset_bottom = 26.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_qdvrb")
+
+[connection signal="pressed" from="Panel/Button" to="." method="_on_spawn_pressed"]

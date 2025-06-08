@@ -31,3 +31,7 @@ light_color = Color(1, 0.833333, 0, 1)
 
 [node name="Green" type="OmniLight3D" parent="TrafficLightColors"]
 light_color = Color(0, 1, 0, 1)
+
+[node name="RayCast3D" type="RayCast3D" parent="."]
+transform = Transform3D(-4.37114e-08, 1, -4.37114e-08, 0, -4.37114e-08, -1, -1, -4.37114e-08, 1.91069e-15, 0, 0.656327, -0.0902412)
+target_position = Vector3(0, -10, 0)

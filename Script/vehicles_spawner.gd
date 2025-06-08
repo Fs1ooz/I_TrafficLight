@@ -1,6 +1,6 @@
 extends Node3D
 
-@onready var timer: Timer = $"../Timer"
+#@onready var timer: Timer = $"../Timer"
 
 var vehicle_scenes: Array[PackedScene] = [
 	preload("res://Scenes/sedan.tscn"),
@@ -8,8 +8,8 @@ var vehicle_scenes: Array[PackedScene] = [
 ]
 
 var lanes: Dictionary = {
-	"-ztoz": {"spawn_position": Vector3(1.7, 0, -20), "direction": Vector3.BACK, "rotation": Vector3(0, 0, 0)},
-	"zto-z": {"spawn_position": Vector3(3.4, 0, 40), "direction": Vector3.FORWARD, "rotation": Vector3(0, PI, 0)},
+	"-ztoz": {"spawn_position": Vector3(1.7, 0, -45), "direction": Vector3.BACK, "rotation": Vector3(0, 0, 0)},
+	"zto-z": {"spawn_position": Vector3(3.4, 0, 60), "direction": Vector3.FORWARD, "rotation": Vector3(0, PI, 0)},
 }
 
 var next_vehicle: PackedScene = vehicle_scenes[0]
@@ -18,15 +18,24 @@ func pick_random_vehicle() -> void:
 	if vehicle_scenes.size() > 0:
 		next_vehicle = vehicle_scenes[randi() % vehicle_scenes.size()]
 
-func spawn_vehicle() -> void:
-	pick_random_vehicle()
-	var instance1 = next_vehicle.instantiate()
-	var instance2 = next_vehicle.instantiate()
-	
-	await get_tree().create_timer(0.1).timeout
+func spawn_vehicles(left_count: int, right_count: int) -> void:
+	spawn_A(left_count)
+	spawn_B(right_count)
 
-	spawn_at(instance1, lanes["-ztoz"]["spawn_position"], lanes["-ztoz"]["direction"], lanes["-ztoz"]["rotation"])
-	spawn_at(instance2, lanes["zto-z"]["spawn_position"], lanes["zto-z"]["direction"], lanes["zto-z"]["rotation"])
+func spawn_A(left_count: int) -> void:
+	for i in left_count:
+		pick_random_vehicle()
+		var instance = next_vehicle.instantiate()
+		spawn_at(instance, lanes["-ztoz"]["spawn_position"], lanes["-ztoz"]["direction"], lanes["-ztoz"]["rotation"])
+		await get_tree().create_timer(2.0).timeout
+
+func spawn_B(right_count: int) -> void:
+	for i in right_count:
+		pick_random_vehicle()
+		var instance = next_vehicle.instantiate()
+		spawn_at(instance, lanes["zto-z"]["spawn_position"], lanes["zto-z"]["direction"], lanes["zto-z"]["rotation"])
+		await get_tree().create_timer(2.0).timeout
+
 
 func spawn_at(instance: Node3D, pos: Vector3, dir: Vector3, rot: Vector3) -> void:
 	get_parent().add_child(instance)
@@ -34,9 +43,9 @@ func spawn_at(instance: Node3D, pos: Vector3, dir: Vector3, rot: Vector3) -> voi
 	instance.rotation = rot
 	instance.direction = dir
 
-func _on_timer_timeout() -> void:
-	var vehicles = get_tree().get_nodes_in_group("Vehicles")
-	if vehicles.size() > 10:
-		return
-	spawn_vehicle()
-	timer.start()
+#func _on_timer_timeout() -> void:
+	#var vehicles = get_tree().get_nodes_in_group("Vehicles")
+	#if vehicles.size() > 12:
+		#return
+	#spawn_vehicles()
+	#timer.start()

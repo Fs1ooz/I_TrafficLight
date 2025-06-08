@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://c5fa1cpdlcm3r" path="res://Script/infrared_sensor.gd" id="1_uxdkq"]
 
 [node name="InfraredSensor" type="Node3D"]
-transform = Transform3D(-4.37114e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1, -4.37114e-08, 1.91069e-15, 0, 0.5, 0)
 script = ExtResource("1_uxdkq")
+metadata/_custom_type_script = "uid://c5fa1cpdlcm3r"
 
 [node name="InfraredA" type="RayCast3D" parent="." groups=["Infrareds"]]
 transform = Transform3D(1, 0, 0, 0, 1, -8.35189e-23, 0, -8.35188e-23, 1, 0, 0, 0)
