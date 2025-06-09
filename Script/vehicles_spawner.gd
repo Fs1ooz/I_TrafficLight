@@ -1,6 +1,6 @@
 extends Node3D
 
-#@onready var timer: Timer = $"../Timer"
+var timer: float = 1.2
 
 var vehicle_scenes: Array[PackedScene] = [
 	preload("res://Scenes/sedan.tscn"),
@@ -27,14 +27,14 @@ func spawn_A(left_count: int) -> void:
 		pick_random_vehicle()
 		var instance = next_vehicle.instantiate()
 		spawn_at(instance, lanes["-ztoz"]["spawn_position"], lanes["-ztoz"]["direction"], lanes["-ztoz"]["rotation"])
-		await get_tree().create_timer(2.0).timeout
+		await get_tree().create_timer(timer).timeout
 
 func spawn_B(right_count: int) -> void:
 	for i in right_count:
 		pick_random_vehicle()
 		var instance = next_vehicle.instantiate()
 		spawn_at(instance, lanes["zto-z"]["spawn_position"], lanes["zto-z"]["direction"], lanes["zto-z"]["rotation"])
-		await get_tree().create_timer(2.0).timeout
+		await get_tree().create_timer(timer).timeout
 
 
 func spawn_at(instance: Node3D, pos: Vector3, dir: Vector3, rot: Vector3) -> void:
@@ -42,10 +42,3 @@ func spawn_at(instance: Node3D, pos: Vector3, dir: Vector3, rot: Vector3) -> voi
 	instance.global_position = pos
 	instance.rotation = rot
 	instance.direction = dir
-
-#func _on_timer_timeout() -> void:
-	#var vehicles = get_tree().get_nodes_in_group("Vehicles")
-	#if vehicles.size() > 12:
-		#return
-	#spawn_vehicles()
-	#timer.start()

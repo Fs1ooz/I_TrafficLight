@@ -19,7 +19,6 @@ material = SubResource("StandardMaterial3D_5ukr8")
 
 [node name="World" type="Node3D" node_paths=PackedStringArray("sensor_left", "sensor_right", "traffic_light_left", "traffic_light_right")]
 script = ExtResource("1_go701")
-time_scale = 2
 sensor_left = NodePath("InfraredSensorA")
 sensor_right = NodePath("InfraredSensorB")
 traffic_light_left = NodePath("TrafficLightA")
@@ -45,6 +44,11 @@ sensor_direction = "zto-z"
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_5a7ea")
+
+[node name="Camera3D2" type="Camera3D" parent="."]
+transform = Transform3D(-4.37114e-08, 1, 4.37114e-08, 0, -4.37114e-08, 1, 1, 4.37114e-08, 1.91069e-15, 2.56224, 30.5731, 5.48655)
+keep_aspect = 0
+fov = 121.7
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -59.2512, 6.3648, 7.07052)

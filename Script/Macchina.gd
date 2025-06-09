@@ -1,7 +1,7 @@
 extends CharacterBody3D
 
-@export var speed: float = 5.0
-@export var slow_speed: float = 0.5
+@export var speed: float = 10.0
+@export var slow_speed: float = 1.0
 @export var stop_threshold: float = 5.0
 @export var car_stop_distance: float = 3.8
 @export var lane_width: float = 1.7  # distanza laterale massima per considerare il semaforo "nella stessa corsia"
@@ -15,15 +15,15 @@ func _process(delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	if should_stop:
-		velocity = velocity.lerp(Vector3.ZERO, delta * 4.0)
+		velocity = velocity.lerp(Vector3.ZERO, delta * 8.0)
 	else:
 		var traffic_action = get_traffic_action()
 		match traffic_action:
 			"stop":
 				if velocity != Vector3.ZERO:
-					velocity = velocity.lerp(Vector3.ZERO, delta * 4.0)
+					velocity = velocity.lerp(Vector3.ZERO, delta * 8.0)
 			"slow":
-				velocity = velocity.lerp(slow_speed * direction, delta * 3.0)
+				velocity = velocity.lerp(slow_speed * direction, delta * 6.0)
 			"go":
 				velocity = velocity.lerp(speed * direction, delta)
 	move_and_slide()

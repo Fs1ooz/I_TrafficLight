@@ -2,11 +2,12 @@
 
 [ext_resource type="Script" uid="uid://cep1f8v8k6y7l" path="res://Script/traffic_lights.gd" id="1_tmwn3"]
 
-[node name="TrafficLight" type="Node3D" node_paths=PackedStringArray("red_light", "yellow_light", "green_light") groups=["Traffic Lights"]]
+[node name="TrafficLight" type="Node3D" node_paths=PackedStringArray("red_light", "yellow_light", "green_light", "exit_sensor") groups=["Traffic Lights"]]
 script = ExtResource("1_tmwn3")
 red_light = NodePath("TrafficLightColors/Red")
 yellow_light = NodePath("TrafficLightColors/Yellow")
 green_light = NodePath("TrafficLightColors/Green")
+exit_sensor = NodePath("RayCast3D")
 metadata/_custom_type_script = "uid://cep1f8v8k6y7l"
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]

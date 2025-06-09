@@ -1,14 +1,15 @@
 extends Node3D
 
-@export var time_scale: int = 1.0
+@export var time_scale: float = 1.0
 @export var sensor_left: InfraredSensor
 @export var sensor_right: InfraredSensor  
 @export var traffic_light_left: TrafficLight
 @export var traffic_light_right: TrafficLight
 @export var max_green_time: float = 60.0
-@export var min_green_time: float = 20.0
-@export var exit_wait_time: float = 10.0
-@export var check_interval: float = 0.5
+@export var min_green_time: float = 5.0
+@export var exit_wait_time: float = 15.0
+@export var check_interval: float = 0.1
+@export var seconds_per_vehicle: float = 8.0  # Tempo medio per veicolo
 
 var is_running = false
 
@@ -30,10 +31,8 @@ func start_traffic_system():
 	traffic_cycle()
 
 func traffic_cycle():
-	var left_turn = true
-	
 	while is_running:
-		print("=== INIZIO CICLO ===")
+		print("=== INIZIO CICLO OTTIMIZZATO ===")
 		
 		# Calcola i veicoli in attesa per ogni lato
 		var waiting_left = max(0, sensor_left.get_vehicle_count() - traffic_light_left.get_exit_count())
@@ -41,45 +40,64 @@ func traffic_cycle():
 		
 		print("Veicoli in attesa - Sinistra: ", waiting_left, " Destra: ", waiting_right)
 		
-		# LOGICA SEMPLIFICATA: se un lato non ha traffico, salta
+		# NESSUN TRAFFICO
 		if waiting_left == 0 and waiting_right == 0:
 			print("Nessun traffico, aspetto...")
 			await get_tree().create_timer(2.0).timeout
 			continue
-		elif waiting_left == 0:
-			print("Nessun traffico a sinistra, servo solo destra")
-			await execute_right_phase()
-		elif waiting_right == 0:
-			print("Nessun traffico a destra, servo solo sinistra")
-			await execute_left_phase()
-		else:
-			# Entrambi hanno traffico, alterna normalmente
-			if left_turn:
-				await execute_left_phase()
-			else:
-				await execute_right_phase()
-			left_turn = !left_turn
+		
+		# CALCOLO OTTIMALE DEI TEMPI
+		var total_vehicles = waiting_left + waiting_right
+		var total_time_available = max_green_time * 2  # 120s totali disponibili
+		
+		var left_time = 0.0
+		var right_time = 0.0
+		
+		if waiting_left > 0 and waiting_right > 0:
+			# ENTRAMBI HANNO TRAFFICO - Distribuisci proporzionalmente
+			var time_per_vehicle = total_time_available / float(total_vehicles)
+			left_time = waiting_left * time_per_vehicle
+			right_time = waiting_right * time_per_vehicle
+			
+			print("Distribuzione proporzionale:")
+			print("  Tempo per veicolo: ", time_per_vehicle, "s")
+			print("  Tempo sinistra: ", left_time, "s (", waiting_left, " veicoli)")
+			print("  Tempo destra: ", right_time, "s (", waiting_right, " veicoli)")
+		elif waiting_left > 0:
+			# SOLO SINISTRA HA TRAFFICO
+			left_time = min(waiting_left * seconds_per_vehicle, max_green_time)
+			print("Solo sinistra - Tempo calcolato: ", left_time, "s")
+		elif waiting_right > 0:
+			# SOLO DESTRA HA TRAFFICO
+			right_time = min(waiting_right * seconds_per_vehicle, max_green_time)
+			print("Solo destra - Tempo calcolato: ", right_time, "s")
+		
+		# Applica limiti minimi e massimi
+		if left_time > 0:
+			left_time = clamp(left_time, min_green_time, max_green_time)
+		if right_time > 0:
+			right_time = clamp(right_time, min_green_time, max_green_time)
+		
+		print("Tempi finali - Sinistra: ", left_time, "s, Destra: ", right_time, "s")
+		
+		# ESEGUI LE FASI CON I TEMPI CALCOLATI
+		if left_time > 0:
+			await execute_left_phase_with_time(left_time)
+		if right_time > 0:
+			await execute_right_phase_with_time(right_time)
 		
 		# Pausa breve tra cicli
-		traffic_light_left.current_light = "red"
-		traffic_light_right.current_light = "red"
-		traffic_light_left.update_lights()
-		traffic_light_right.update_lights()
-		
 		await get_tree().create_timer(1.0).timeout
-		print("=== FINE CICLO ===\n")
+		print("=== FINE CICLO OTTIMIZZATO ===\n")
 
-func execute_left_phase():
-	print("=== FASE SINISTRA ===")
+func execute_left_phase_with_time(allocated_time: float):
+	print("=== FASE SINISTRA (", allocated_time, "s allocati) ===")
 	
-	print("Contatori iniziali - Sinistra arrivi: ", sensor_left.get_vehicle_count(), " uscite: ", traffic_light_left.get_exit_count())
-	print("Contatori iniziali - Destra arrivi: ", sensor_right.get_vehicle_count(), " uscite: ", traffic_light_right.get_exit_count())
-	
-	# Calcola quanti veicoli sono in attesa a sinistra
 	var initial_waiting_left = max(0, sensor_left.get_vehicle_count() - traffic_light_left.get_exit_count())
 	var target_exits = traffic_light_left.get_exit_count() + initial_waiting_left
-	print("Veicoli in attesa a sinistra: ", initial_waiting_left)
-	print("Target uscite da raggiungere: ", target_exits)
+	
+	print("Veicoli in attesa: ", initial_waiting_left)
+	print("Target uscite: ", target_exits)
 	
 	# Verde sinistra, rosso destra
 	traffic_light_left.current_light = "green"
@@ -88,87 +106,52 @@ func execute_left_phase():
 	traffic_light_right.update_lights()
 	
 	var green_duration = 0.0
-	var last_arrival_count_right = sensor_right.get_vehicle_count()
 	var time_without_new_exits = 0.0
 	var last_exit_count = traffic_light_left.get_exit_count()
 	
-	# Aspetta almeno il tempo minimo (quello originale)
-	while green_duration < min_green_time:
-		await get_tree().create_timer(check_interval).timeout
-		green_duration += check_interval
-		
-		var current_exits = traffic_light_left.get_exit_count()
-		var current_arrivals_right = sensor_right.get_vehicle_count()
-		var new_arrivals_right = current_arrivals_right - last_arrival_count_right
-		
-		print("Verde sinistra - Durata: ", green_duration, "s")
-		print("  Uscite attuali: ", current_exits, "/", target_exits)
-		print("  Nuovi arrivi destra: ", new_arrivals_right, " (tot: ", current_arrivals_right, ")")
-		
-		# Aggiorna contatori
-		if current_exits > last_exit_count:
-			time_without_new_exits = 0.0
-			last_exit_count = current_exits
-		else:
-			time_without_new_exits += check_interval
-		
-		last_arrival_count_right = current_arrivals_right
-	
-	# Continua fino al tempo massimo o fino a quando tutti i veicoli sono usciti
-	while green_duration < max_green_time:
+	# Loop principale con tempo allocato
+	while green_duration < allocated_time:
 		await get_tree().create_timer(check_interval).timeout
 		green_duration += check_interval
 		time_without_new_exits += check_interval
 		
-		var current_exits = traffic_light_left.get_exit_count()
+		var current_exits = traffic_light_right.get_exit_count()
 		var current_arrivals_right = sensor_right.get_vehicle_count()
-		var new_arrivals_right = current_arrivals_right - last_arrival_count_right
 		var waiting_right = max(0, current_arrivals_right - traffic_light_right.get_exit_count())
 		
-		print("Verde sinistra - Durata: ", green_duration, "s")
-		print("  Uscite attuali: ", current_exits, "/", target_exits)
-		print("  Nuovi arrivi destra: ", new_arrivals_right, " (tot: ", current_arrivals_right, ")")
-		print("  Veicoli in attesa destra: ", waiting_right)
-		print("  Tempo senza nuove uscite: ", time_without_new_exits, "s")
+		print("Verde sinistra - ", green_duration, "/", allocated_time, "s")
+		print("  Uscite: ", current_exits, "/", target_exits)
+		print("  Attesa destra: ", waiting_right)
+		print("  Inattività: ", time_without_new_exits, "s")
 		
 		# Reset timer se ci sono nuove uscite
 		if current_exits > last_exit_count:
 			time_without_new_exits = 0.0
 			last_exit_count = current_exits
 		
-		# Condizioni per terminare il verde (mantengo quelle originali più semplici)
+		# Condizioni per terminare anticipatamente
 		var all_vehicles_exited = current_exits >= target_exits
 		var no_activity = time_without_new_exits >= exit_wait_time
-		var pressure_from_right = new_arrivals_right > 0 and time_without_new_exits > exit_wait_time / 2
+		var min_time_passed = green_duration >= min_green_time
 		
-		if all_vehicles_exited:
-			print("Tutti i veicoli sono usciti, termino verde sinistra")
+		if min_time_passed and (all_vehicles_exited or no_activity):
+			print("Terminazione anticipata: tutti usciti=", all_vehicles_exited, ", inattività=", no_activity)
 			break
-		elif no_activity:
-			print("Nessuna attività da ", exit_wait_time, "s, termino verde sinistra")
-			break
-		elif pressure_from_right:
-			print("Pressione da destra e nessuna uscita recente, termino verde sinistra")
-			break
-		
-		last_arrival_count_right = current_arrivals_right
+	
+	print("Fase sinistra completata in ", green_duration, "s")
 	
 	# RESET ALLA FINE
-	print("Reset contatori sinistra dopo aver servito tutti i veicoli")
 	sensor_left.reset_count()
 	traffic_light_left.reset_exit_count()
 
-func execute_right_phase():
-	print("=== FASE DESTRA ===")
+func execute_right_phase_with_time(allocated_time: float):
+	print("=== FASE DESTRA (", allocated_time, "s allocati) ===")
 	
-	print("Contatori iniziali - Sinistra arrivi: ", sensor_left.get_vehicle_count(), " uscite: ", traffic_light_left.get_exit_count())
-	print("Contatori iniziali - Destra arrivi: ", sensor_right.get_vehicle_count(), " uscite: ", traffic_light_right.get_exit_count())
-	
-	# Calcola quanti veicoli sono in attesa a destra
 	var initial_waiting_right = max(0, sensor_right.get_vehicle_count() - traffic_light_right.get_exit_count())
 	var target_exits = traffic_light_right.get_exit_count() + initial_waiting_right
-	print("Veicoli in attesa a destra: ", initial_waiting_right)
-	print("Target uscite da raggiungere: ", target_exits)
+	
+	print("Veicoli in attesa: ", initial_waiting_right)
+	print("Target uscite: ", target_exits)
 	
 	# Verde destra, rosso sinistra
 	traffic_light_right.current_light = "green"
@@ -177,82 +160,56 @@ func execute_right_phase():
 	traffic_light_left.update_lights()
 	
 	var green_duration = 0.0
-	var last_arrival_count_left = sensor_left.get_vehicle_count()
 	var time_without_new_exits = 0.0
 	var last_exit_count = traffic_light_right.get_exit_count()
 	
-	# Aspetta almeno il tempo minimo (quello originale)
-	while green_duration < min_green_time:
-		await get_tree().create_timer(check_interval).timeout
-		green_duration += check_interval
-		
-		var current_exits = traffic_light_right.get_exit_count()
-		var current_arrivals_left = sensor_left.get_vehicle_count()
-		var new_arrivals_left = current_arrivals_left - last_arrival_count_left
-		
-		print("Verde destra - Durata: ", green_duration, "s")
-		print("  Uscite attuali: ", current_exits, "/", target_exits)
-		print("  Nuovi arrivi sinistra: ", new_arrivals_left, " (tot: ", current_arrivals_left, ")")
-		
-		# Aggiorna contatori
-		if current_exits > last_exit_count:
-			time_without_new_exits = 0.0
-			last_exit_count = current_exits
-		else:
-			time_without_new_exits += check_interval
-		
-		last_arrival_count_left = current_arrivals_left
-	
-	# Continua fino al tempo massimo o fino a quando tutti i veicoli sono usciti
-	while green_duration < max_green_time:
+	# Loop principale con tempo allocato
+	while green_duration < allocated_time:
 		await get_tree().create_timer(check_interval).timeout
 		green_duration += check_interval
 		time_without_new_exits += check_interval
 		
-		var current_exits = traffic_light_right.get_exit_count()
+		var current_exits = traffic_light_left.get_exit_count()
 		var current_arrivals_left = sensor_left.get_vehicle_count()
-		var new_arrivals_left = current_arrivals_left - last_arrival_count_left
 		var waiting_left = max(0, current_arrivals_left - traffic_light_left.get_exit_count())
 		
-		print("Verde destra - Durata: ", green_duration, "s")
-		print("  Uscite attuali: ", current_exits, "/", target_exits)
-		print("  Nuovi arrivi sinistra: ", new_arrivals_left, " (tot: ", current_arrivals_left, ")")
-		print("  Veicoli in attesa sinistra: ", waiting_left)
-		print("  Tempo senza nuove uscite: ", time_without_new_exits, "s")
+		print("Verde destra - ", green_duration, "/", allocated_time, "s")
+		print("  Uscite: ", current_exits, "/", target_exits)
+		print("  Attesa sinistra: ", waiting_left)
+		print("  Inattività: ", time_without_new_exits, "s")
 		
 		# Reset timer se ci sono nuove uscite
 		if current_exits > last_exit_count:
 			time_without_new_exits = 0.0
 			last_exit_count = current_exits
 		
-		# Condizioni per terminare il verde (mantengo quelle originali più semplici)
+		# Condizioni per terminare anticipatamente
 		var all_vehicles_exited = current_exits >= target_exits
 		var no_activity = time_without_new_exits >= exit_wait_time
-		var pressure_from_left = new_arrivals_left > 0 and time_without_new_exits > exit_wait_time / 2
+		var min_time_passed = green_duration >= min_green_time
 		
-		if all_vehicles_exited:
-			print("Tutti i veicoli sono usciti, termino verde destra")
+		if min_time_passed and (all_vehicles_exited or no_activity):
+			print("Terminazione anticipata: tutti usciti=", all_vehicles_exited, ", inattività=", no_activity)
 			break
-		elif no_activity:
-			print("Nessuna attività da ", exit_wait_time, "s, termino verde destra")
-			break
-		elif pressure_from_left:
-			print("Pressione da sinistra e nessuna uscita recente, termino verde destra")
-			break
-		
-		last_arrival_count_left = current_arrivals_left
+	
+	print("Fase destra completata in ", green_duration, "s")
 	
 	# RESET ALLA FINE
-	print("Reset contatori destra dopo aver servito tutti i veicoli")
 	sensor_right.reset_count()
 	traffic_light_right.reset_exit_count()
+
+# Mantieni le funzioni originali per compatibilità
+func execute_left_phase():
+	await execute_left_phase_with_time(max_green_time)
+
+func execute_right_phase():
+	await execute_right_phase_with_time(max_green_time)
 
 func calculate_green_time(vehicle_count: int) -> float:
 	if vehicle_count <= 0:
 		return min_green_time
 	
-	# 8 secondi per veicolo + tempo minimo
-	var calculated_time = min_green_time + (vehicle_count * 8.0)
+	var calculated_time = min_green_time + (vehicle_count * seconds_per_vehicle)
 	return min(calculated_time, max_green_time)
 
 func stop_traffic_system():
