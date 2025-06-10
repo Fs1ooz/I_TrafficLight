@@ -1,7 +1,7 @@
 extends Control
 
-@export var left_input: LineEdit
-@export var right_input: LineEdit
+@export var left_input: SpinBox
+@export var right_input: SpinBox
 @export var button: Button
 @export var vehicle_spawner: Node3D
 

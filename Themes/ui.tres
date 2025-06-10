@@ -1,0 +1,31 @@
+[gd_resource type="Theme" load_steps=10 format=3 uid="uid://umh6uxqd0c7r"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_hr8gy"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_dbn56"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_bpnmc"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_vhwyg"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_37kwd"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_mf7g0"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_jtk3v"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_5e52x"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_fyj8d"]
+
+[resource]
+SpinBox/constants/buttons_width = 0
+SpinBox/icons/down = SubResource("ViewportTexture_hr8gy")
+SpinBox/icons/down_disabled = SubResource("ViewportTexture_dbn56")
+SpinBox/icons/down_hover = SubResource("ViewportTexture_bpnmc")
+SpinBox/icons/down_pressed = SubResource("ViewportTexture_vhwyg")
+SpinBox/icons/up = SubResource("ViewportTexture_37kwd")
+SpinBox/icons/up_disabled = SubResource("ViewportTexture_mf7g0")
+SpinBox/icons/up_hover = SubResource("ViewportTexture_jtk3v")
+SpinBox/icons/up_pressed = SubResource("ViewportTexture_5e52x")
+SpinBox/icons/updown = SubResource("ViewportTexture_fyj8d")

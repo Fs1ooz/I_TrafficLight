@@ -1,9 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://cvllrjtnyoc0d"]
+[gd_scene load_steps=4 format=3 uid="uid://cvllrjtnyoc0d"]
 
 [ext_resource type="Script" uid="uid://cwnn2pl5bnqqv" path="res://Script/ui.gd" id="1_jxero"]
+[ext_resource type="Theme" uid="uid://umh6uxqd0c7r" path="res://Themes/ui.tres" id="2_qdvrb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qdvrb"]
-bg_color = Color(0.86, 0.2838, 0.2838, 1)
+bg_color = Color(0.320775, 0.63, 0.0315, 1)
 
 [node name="UI" type="Control" node_paths=PackedStringArray("left_input", "right_input", "button")]
 layout_mode = 3
@@ -13,8 +14,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_jxero")
-left_input = NodePath("Panel/VBoxContainer/LineEdit")
-right_input = NodePath("Panel/VBoxContainer2/LineEdit")
+left_input = NodePath("Panel/VBoxContainer/SpinBox")
+right_input = NodePath("Panel/VBoxContainer2/SpinBox")
 button = NodePath("Panel/Button")
 
 [node name="Panel" type="Panel" parent="."]
@@ -36,8 +37,11 @@ offset_bottom = 40.0
 layout_mode = 2
 text = "Macchine da sinistra"
 
-[node name="LineEdit" type="LineEdit" parent="Panel/VBoxContainer"]
+[node name="SpinBox" type="SpinBox" parent="Panel/VBoxContainer"]
 layout_mode = 2
+theme = ExtResource("2_qdvrb")
+max_value = 20.0
+rounded = true
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="Panel"]
 layout_mode = 1
@@ -52,8 +56,12 @@ grow_horizontal = 0
 layout_mode = 2
 text = "Macchine da destra"
 
-[node name="LineEdit" type="LineEdit" parent="Panel/VBoxContainer2"]
+[node name="SpinBox" type="SpinBox" parent="Panel/VBoxContainer2"]
 layout_mode = 2
+theme = ExtResource("2_qdvrb")
+max_value = 20.0
+rounded = true
+alignment = 2
 
 [node name="Button" type="Button" parent="Panel"]
 custom_minimum_size = Vector2(50, 50)
@@ -69,7 +77,10 @@ offset_right = 25.0
 offset_bottom = 26.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_qdvrb")
+text = "AVVIA"
+icon_alignment = 1
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 1

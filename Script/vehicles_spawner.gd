@@ -8,7 +8,7 @@ var vehicle_scenes: Array[PackedScene] = [
 ]
 
 var lanes: Dictionary = {
-	"-ztoz": {"spawn_position": Vector3(1.7, 0, -45), "direction": Vector3.BACK, "rotation": Vector3(0, 0, 0)},
+	"-ztoz": {"spawn_position": Vector3(1.7, 0, -55), "direction": Vector3.BACK, "rotation": Vector3(0, 0, 0)},
 	"zto-z": {"spawn_position": Vector3(3.4, 0, 60), "direction": Vector3.FORWARD, "rotation": Vector3(0, PI, 0)},
 }
 
