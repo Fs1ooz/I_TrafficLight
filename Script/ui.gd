@@ -6,8 +6,8 @@ extends Control
 @export var vehicle_spawner: Node3D
 
 func _on_spawn_pressed():
-	var left_count = int(left_input.text)
-	var right_count = int(right_input.text)
+	var left_count = int(left_input.value)
+	var right_count = int(right_input.value)
 	spawn_machines(left_count, right_count)
 
 func spawn_machines(left_count: int, right_count: int):

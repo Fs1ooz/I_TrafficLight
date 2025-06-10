@@ -40,7 +40,7 @@ text = "Macchine da sinistra"
 [node name="SpinBox" type="SpinBox" parent="Panel/VBoxContainer"]
 layout_mode = 2
 theme = ExtResource("2_qdvrb")
-max_value = 20.0
+max_value = 10.0
 rounded = true
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="Panel"]
@@ -59,7 +59,7 @@ text = "Macchine da destra"
 [node name="SpinBox" type="SpinBox" parent="Panel/VBoxContainer2"]
 layout_mode = 2
 theme = ExtResource("2_qdvrb")
-max_value = 20.0
+max_value = 10.0
 rounded = true
 alignment = 2
 
