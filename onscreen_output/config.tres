@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="OnscreenOutputConfig" load_steps=2 format=3 uid="uid://dmll45km8utg5"]
+
+[ext_resource type="Script" uid="uid://40iv23mr8tqf" path="res://onscreen_output/Ignore/config.gd" id="1_3eocp"]
+
+[resource]
+script = ExtResource("1_3eocp")
+singleton_name = "Output"
+debug_enabled = true
+save_logs = false
+log_path = "user://"
+show_timestamp = true
+font_color = Color(0.776471, 0.792157, 0.827451, 1)
+background_color = Color(0.0980392, 0.109804, 0.184314, 1)
+font_size = 16.0
+anchor = 0
+size = Vector2(0, 0)
