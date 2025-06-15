@@ -15,10 +15,10 @@ func _process(delta: float) -> void:
 	if not raycast_A or not raycast_B:
 		print("Raycast non assegnato!")
 		return
-	
+
 	var is_A_colliding = raycast_A.is_colliding()
 	var is_B_colliding = raycast_B.is_colliding()
-	
+
 	# Conta tutti i veicoli che arrivano, indipendentemente dal semaforo
 	# (Il semaforo conta separatamente quelli che passano)
 	if is_A_colliding and not was_A_colliding:
@@ -28,11 +28,11 @@ func _process(delta: float) -> void:
 				vehicles_detected.append(collider_A)
 				vehicle_count += 1
 				#print("Arrivo rilevato sensore ", sensor_direction, " #", vehicle_count)
-	
+
 	# Pulisci memoria
 	if vehicles_detected.size() > 30:
 		vehicles_detected = vehicles_detected.slice(-30)
-	
+
 	was_A_colliding = is_A_colliding
 	was_B_colliding = is_B_colliding
 

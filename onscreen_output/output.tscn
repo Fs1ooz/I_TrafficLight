@@ -1,9 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bjetmrco2b8bw"]
-
-[ext_resource type="Script" uid="uid://b542qf3rkjxjd" path="res://onscreen_output/output.gd" id="1_n6gei"]
+[gd_scene format=3 uid="uid://bjetmrco2b8bw"]
 
 [node name="OnscreenOutput" type="CanvasLayer"]
-script = ExtResource("1_n6gei")
+visible = false
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3

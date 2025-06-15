@@ -23,12 +23,12 @@ class_name OnscreenOutputConfig extends Resource
 @export var size := Vector2():
 	set(value):
 		value = get_default(value)
-		
+
 		var real_size := get_window_real_size()
 		var min_size := Vector2()
 		min_size.x = real_size.x / 8
 		min_size.y = real_size.y / 4
-		
+
 		value.x = clampf(value.x, min_size.x, INF)
 		value.y = clampf(value.y, min_size.y, INF)
 		size = get_default(value)
@@ -48,7 +48,7 @@ func get_window_real_size() -> Vector2:
 	)
 	if override != Vector2():
 		return override
-	
+
 	var real_size := Vector2(
 		ProjectSettings.get("display/window/size/viewport_width"),
 		ProjectSettings.get("display/window/size/viewport_height")

@@ -21,7 +21,7 @@ func _process(delta: float) -> void:
 	if exit_sensor:
 		var is_colliding = exit_sensor.is_colliding()
 		var collider = exit_sensor.get_collider()
-		
+
 		# Rileva nuovo veicolo che passa
 		if is_colliding and not was_exit_colliding:
 			if collider and collider.is_in_group("Vehicles"):
@@ -29,11 +29,11 @@ func _process(delta: float) -> void:
 					vehicles_passed.append(collider)
 					exit_count += 1
 					#print("Passaggio rilevato dal semaforo - Veicolo #", exit_count)
-		
+
 		# Pulisci memoria veicoli
 		if vehicles_passed.size() > 20:
 			vehicles_passed = vehicles_passed.slice(-20)
-		
+
 		was_exit_colliding = is_colliding
 
 func set_green_time(time: float):

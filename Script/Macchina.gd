@@ -6,7 +6,7 @@ extends CharacterBody3D
 @export var car_stop_distance: float = 3.8
 @export var lane_width: float = 1.7  # distanza laterale massima per considerare il semaforo "nella stessa corsia"
 @onready var traffic_lights = VehiclesManager.traffic_lights
-@onready var vehicles: Array = get_tree().get_nodes_in_group("Vehicles") 
+@onready var vehicles: Array = get_tree().get_nodes_in_group("Vehicles")
 @onready var should_stop: bool
 var direction: Vector3 = Vector3.BACK
 
@@ -44,17 +44,17 @@ func get_traffic_action() -> String:
 
 func is_near_traffic_light(traffic_light) -> bool:
 	var to_light = traffic_light.global_position - global_position
-	
+
 	# Calcola se il semaforo è davanti
 	var dot_product = direction.dot(to_light)
 	if dot_product <= 0:
 		return false
-	
+
 	# Calcola la distanza perpendicolare (lateralmente) rispetto alla direzione
 	var perpendicular_distance = get_perpendicular_distance(to_light, direction)
 	if perpendicular_distance > lane_width:
 		return false
-	
+
 	# Controlla la distanza totale
 	var distance = to_light.length()
 	return distance < stop_threshold
@@ -62,31 +62,31 @@ func is_near_traffic_light(traffic_light) -> bool:
 
 func check_vehicles() -> bool:
 	var my_pos = global_position
-	
+
 	for vehicle in vehicles:
 		if vehicle == self or not is_instance_valid(vehicle):
 			continue
-		
+
 		var other_pos = vehicle.global_position
 		var to_other = other_pos - my_pos
-		
+
 		# Calcola se l'altro veicolo è davanti
 		var dot_product = direction.dot(to_other)
 		if dot_product <= 0:
 			continue
-		
+
 		# Calcola la distanza laterale
 		var perpendicular_distance = get_perpendicular_distance(to_other, direction)
 		if perpendicular_distance > lane_width:
 			continue  # troppo laterale: non è nella stessa corsia
-		
+
 		# Calcola la distanza davanti
 		var distance_along_direction = dot_product
 		if distance_along_direction > car_stop_distance:
 			continue
-		
+
 		return true
-	
+
 	return false
 
 
