@@ -7,10 +7,11 @@ extends Node3D
 @export var traffic_light_right: TrafficLight
 @export var max_green_time: float = 60.0
 @export var min_green_time: float = 5.0
+@export var yellow_time: float = 2.0  # Durata del giallo
 @export var exit_wait_time: float = 15.0
-@export var check_interval: float = 0.1
+@export var check_interval: float = 0.05
 @export var seconds_per_vehicle: float = 8.0
-@export var initial_wait_time: float = 3.0  # Tempo di attesa iniziale per permettere ai veicoli di arrivare
+@export var initial_wait_time: float = 3.0
 
 var is_running = false
 
@@ -106,7 +107,7 @@ func traffic_cycle():
 			await execute_right_phase_with_time(right_time)
 
 		# Pausa breve tra cicli
-		await get_tree().create_timer(1.0).timeout
+		await get_tree().create_timer(0.2).timeout
 		print("=== FINE CICLO OTTIMIZZATO ===\n")
 
 func execute_left_phase_with_time(allocated_time: float):
@@ -156,18 +157,19 @@ func execute_left_phase_with_time(allocated_time: float):
 		var no_more_waiting = current_waiting_left == 0
 		var no_activity = time_without_new_exits >= exit_wait_time
 		var min_time_passed = green_duration >= min_green_time
-		#var urgent_right_traffic = current_waiting_right > 3  # Traffico urgente dall'altra parte
 
 		if min_time_passed and (no_more_waiting or no_activity):
 			var reason = ""
 			if no_more_waiting: reason += "nessuna attesa "
 			if no_activity: reason += "inattività "
-			#if urgent_right_traffic: reason += "traffico urgente destra "
 			print("Terminazione anticipata: ", reason)
 			break
 
-	print("Fase sinistra completata in ", green_duration, "s")
+	print("Fase verde sinistra completata in ", green_duration, "s")
 	print("Veicoli processati totali: ", traffic_light_right.get_exit_count() - initial_exit_count)
+
+	# *** FASE GIALLA SINISTRA ***
+	await execute_yellow_phase_left()
 
 func execute_right_phase_with_time(allocated_time: float):
 	print("=== FASE DESTRA (", allocated_time, "s allocati) ===")
@@ -216,18 +218,56 @@ func execute_right_phase_with_time(allocated_time: float):
 		var no_more_waiting = current_waiting_right == 0
 		var no_activity = time_without_new_exits >= exit_wait_time
 		var min_time_passed = green_duration >= min_green_time
-		#var urgent_left_traffic = current_waiting_left > 3  # Traffico urgente dall'altra parte
 
 		if min_time_passed and (no_more_waiting or no_activity):
 			var reason = ""
 			if no_more_waiting: reason += "nessuna attesa "
 			if no_activity: reason += "inattività "
-			#if urgent_left_traffic: reason += "traffico urgente sinistra "
 			print("Terminazione anticipata: ", reason)
 			break
 
-	print("Fase destra completata in ", green_duration, "s")
+	print("Fase verde destra completata in ", green_duration, "s")
 	print("Veicoli processati totali: ", traffic_light_left.get_exit_count() - initial_exit_count)
+
+	# *** FASE GIALLA DESTRA ***
+	await execute_yellow_phase_right()
+
+# Nuove funzioni per gestire le fasi gialle
+func execute_yellow_phase_left():
+	print("=== FASE GIALLA SINISTRA (", yellow_time, "s) ===")
+
+	# Giallo sinistra, rosso destra
+	traffic_light_left.current_light = "yellow"
+	traffic_light_right.current_light = "red"
+	traffic_light_left.update_lights()
+	traffic_light_right.update_lights()
+
+	# Attesa fissa per il giallo
+	await get_tree().create_timer(yellow_time).timeout
+
+	# Alla fine del giallo, metti rosso
+	traffic_light_left.current_light = "red"
+	traffic_light_left.update_lights()
+
+	print("Fase gialla sinistra completata")
+
+func execute_yellow_phase_right():
+	print("=== FASE GIALLA DESTRA (", yellow_time, "s) ===")
+
+	# Giallo destra, rosso sinistra
+	traffic_light_right.current_light = "yellow"
+	traffic_light_left.current_light = "red"
+	traffic_light_right.update_lights()
+	traffic_light_left.update_lights()
+
+	# Attesa fissa per il giallo
+	await get_tree().create_timer(yellow_time).timeout
+
+	# Alla fine del giallo, metti rosso
+	traffic_light_right.current_light = "red"
+	traffic_light_right.update_lights()
+
+	print("Fase gialla destra completata")
 
 # Funzione per resettare i contatori solo quando necessario
 func smart_reset_counters():
