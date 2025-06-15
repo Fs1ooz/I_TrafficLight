@@ -37,6 +37,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.79561, 0, 17.5235)
 [node name="InfraredSensorA" parent="." node_paths=PackedStringArray("associated_traffic_light") instance=ExtResource("4_5ukr8")]
 transform = Transform3D(-4.37114e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1, -4.37114e-08, 1.91069e-15, 9.95691, 0.5, -41.8057)
 associated_traffic_light = NodePath("../TrafficLightA")
+sensor_direction = "-ztoz"
 
 [node name="InfraredSensorB" parent="." node_paths=PackedStringArray("associated_traffic_light") instance=ExtResource("4_5ukr8")]
 transform = Transform3D(-4.37114e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1, -4.37114e-08, 1.91069e-15, 9.95691, 0.5, 53.3745)

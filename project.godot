@@ -17,8 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-VehiclesManager="*res://Scenes/Singletons/vehicles_manager.tscn"
 Output="*res://onscreen_output/output.tscn"
+TrafficManager="*res://Scenes/Singletons/traffic_manager.tscn"
 
 [display]
 

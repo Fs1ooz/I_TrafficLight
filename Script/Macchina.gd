@@ -5,7 +5,7 @@ extends CharacterBody3D
 @export var stop_threshold: float = 5.0
 @export var car_stop_distance: float = 3.8
 @export var lane_width: float = 1.7  # distanza laterale massima per considerare il semaforo "nella stessa corsia"
-@onready var traffic_lights = VehiclesManager.traffic_lights
+@onready var traffic_lights = TrafficManager.traffic_lights
 @onready var vehicles: Array = get_tree().get_nodes_in_group("Vehicles")
 @onready var should_stop: bool
 var direction: Vector3 = Vector3.BACK
@@ -91,9 +91,9 @@ func check_vehicles() -> bool:
 
 
 # Funzione helper per calcolare la distanza perpendicolare
-func get_perpendicular_distance(vector: Vector3, direction: Vector3) -> float:
+func get_perpendicular_distance(vector: Vector3, _direction: Vector3) -> float:
 	# Proietta il vettore sulla direzione
-	var projection = direction * direction.dot(vector)
+	var projection = _direction * _direction.dot(vector)
 	# Calcola il vettore perpendicolare
 	var perpendicular = vector - projection
 	# Ritorna la lunghezza del vettore perpendicolare

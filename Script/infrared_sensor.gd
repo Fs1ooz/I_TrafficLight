@@ -1,40 +1,59 @@
 extends Node3D
 class_name InfraredSensor
-
 @onready var raycast_A: RayCast3D = $InfraredA
 @onready var raycast_B: RayCast3D = $InfraredB
 @export var associated_traffic_light: TrafficLight
-@export var sensor_direction: String = "-ztoz"
+@export_enum("-ztoz", "zto-z") var sensor_direction: String
+
+# ─── Aggiungi questa variabile ─────────────────────────────────────────────────
+var last_trigger: String = ""
 
 var was_A_colliding = false
 var was_B_colliding = false
 var vehicle_count = 0
 var vehicles_detected = []
 
-func _process(delta: float) -> void:
+# ─── Rinominazione di process() in _physics_process() ────────────────────────────
+func _physics_process(delta: float) -> void:
 	if not raycast_A or not raycast_B:
-		print("Raycast non assegnato!")
+		printerr("Raycast non assegnato!")
 		return
 
 	var is_A_colliding = raycast_A.is_colliding()
 	var is_B_colliding = raycast_B.is_colliding()
 
-	# Conta tutti i veicoli che arrivano, indipendentemente dal semaforo
-	# (Il semaforo conta separatamente quelli che passano)
-	if is_A_colliding and not was_A_colliding:
-		var collider_A = raycast_A.get_collider()
-		if collider_A and collider_A.is_in_group("Vehicles"):
-			if collider_A not in vehicles_detected:
-				vehicles_detected.append(collider_A)
-				vehicle_count += 1
-				#print("Arrivo rilevato sensore ", sensor_direction, " #", vehicle_count)
+	# ─── RISING EDGE DETECTION ────────────────────────────────────────────────────
+	if not was_A_colliding and is_A_colliding:
+		last_trigger = "A"
+	if not was_B_colliding and is_B_colliding:
+		last_trigger = "B"
 
-	# Pulisci memoria
-	if vehicles_detected.size() > 30:
-		vehicles_detected = vehicles_detected.slice(-30)
+	# ─── Conta veicolo solo quando entrambi attivi e last_trigger corrisponde ───────
+	if is_A_colliding and is_B_colliding:
+		match sensor_direction:
+			"-ztoz":
+				if last_trigger == "A":
+					var vehicle = raycast_B.get_collider()
+					if vehicle not in vehicles_detected:
+						printerr("Passaggio da A a B")
+						vehicles_detected.append(vehicle)
+			"zto-z":
+				if last_trigger == "B":
+					var vehicle = raycast_A.get_collider()
+					if vehicle not in vehicles_detected:
+						printerr("Passaggio da B a A")
+						vehicles_detected.append(vehicle)
+		last_trigger = ""    # reset dopo la conta
 
+	# ─── Salva gli stati per il prossimo frame ──────────────────────────────────────
 	was_A_colliding = is_A_colliding
 	was_B_colliding = is_B_colliding
+
+	if vehicles_detected.size() > 50:
+		vehicles_detected = vehicles_detected.slice(-30)
+	vehicle_count = vehicles_detected.size()
+
+
 
 func get_vehicle_count() -> int:
 	return vehicle_count
@@ -42,7 +61,3 @@ func get_vehicle_count() -> int:
 func reset_count():
 	vehicle_count = 0
 	vehicles_detected.clear()
-	#print("Counter reset per sensore ", sensor_direction)
-
-func get_current_count() -> int:
-	return vehicle_count

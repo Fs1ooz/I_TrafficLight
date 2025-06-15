@@ -1,0 +1,8 @@
+Model Information:
+* title:	Traffic Light - 3D Asset
+* source:	https://sketchfab.com/3d-models/traffic-light-3d-asset-c5263072913f47ccb3e0aa094278bb57
+* author:	themaayur (https://sketchfab.com/themaayur)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

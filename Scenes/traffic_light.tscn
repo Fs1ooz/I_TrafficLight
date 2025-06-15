@@ -1,6 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://ud62vixst0na"]
+[gd_scene load_steps=4 format=3 uid="uid://ud62vixst0na"]
 
 [ext_resource type="Script" uid="uid://cep1f8v8k6y7l" path="res://Script/traffic_lights.gd" id="1_tmwn3"]
+[ext_resource type="PackedScene" uid="uid://c036yv5ihu87j" path="res://Scenes/traffic_light_model.tscn" id="2_l57qh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wy3hc"]
+shading_mode = 0
+albedo_color = Color(0.1218, 0.129383, 0.14, 1)
 
 [node name="TrafficLight" type="Node3D" node_paths=PackedStringArray("red_light", "yellow_light", "green_light", "exit_sensor") groups=["Traffic Lights"]]
 script = ExtResource("1_tmwn3")
@@ -10,14 +15,15 @@ green_light = NodePath("TrafficLightColors/Green")
 exit_sensor = NodePath("RayCast3D")
 metadata/_custom_type_script = "uid://cep1f8v8k6y7l"
 
-[node name="CSGBox3D" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.99517, -0.106776)
-size = Vector3(0.4, 1.6, 0.4)
+[node name="TrafficLight3D" parent="." instance=ExtResource("2_l57qh")]
+transform = Transform3D(0.387598, 0, -6.253, 0, 6.265, 0, 6.253, 0, 0.387598, -0.148185, 1.42, -0.340093)
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.636521, -0.0992929)
-radius = 0.058
-height = 1.18937
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.33889, -0.158382)
+radius = 0.0683594
+height = 2.59411
+sides = 7
+material = SubResource("StandardMaterial3D_wy3hc")
 
 [node name="TrafficLightColors" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.51308, 0.179844)
