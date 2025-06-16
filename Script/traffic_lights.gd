@@ -13,6 +13,7 @@ var exit_count: int = 0
 var was_exit_colliding: bool = false
 var vehicles_passed: Array = []
 
+
 func _ready():
 	update_lights()
 

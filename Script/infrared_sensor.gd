@@ -35,13 +35,13 @@ func _physics_process(delta: float) -> void:
 				if last_trigger == "A":
 					var vehicle = raycast_B.get_collider()
 					if vehicle not in vehicles_detected:
-						printerr("Passaggio da A a B")
+
 						vehicles_detected.append(vehicle)
 			"zto-z":
 				if last_trigger == "B":
 					var vehicle = raycast_A.get_collider()
 					if vehicle not in vehicles_detected:
-						printerr("Passaggio da B a A")
+
 						vehicles_detected.append(vehicle)
 		last_trigger = ""    # reset dopo la conta
 

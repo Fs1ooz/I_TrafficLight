@@ -4,11 +4,14 @@ extends CharacterBody3D
 @export var slow_speed: float = 1.0
 @export var stop_threshold: float = 5.0
 @export var car_stop_distance: float = 3.8
-@export var lane_width: float = 1.7  # distanza laterale massima per considerare il semaforo "nella stessa corsia"
-@onready var traffic_lights = TrafficManager.traffic_lights
+@export var lane_width: float = 1.7
+
+var direction: Vector3 = Vector3.BACK
+
+@onready var traffic_lights: Array = get_tree().get_nodes_in_group("Traffic Lights")
 @onready var vehicles: Array = get_tree().get_nodes_in_group("Vehicles")
 @onready var should_stop: bool
-var direction: Vector3 = Vector3.BACK
+
 
 func _process(delta: float) -> void:
 	should_stop = check_vehicles()
