@@ -24,25 +24,15 @@ enum TrafficLightColor {
 @export var check_interval: float = 0.1
 @export var initial_wait_time: float = 2.0
 
+
+var last_left_exits = 0
+var last_right_exits = 0
 var is_running = false
 var current_active_phase: TrafficPhase = TrafficPhase.NONE
 var seconds_per_vehicle: float = 8.0
-var last_left_entries = 0
-var last_right_entries = 0
-var last_left_exits = 0
-var last_right_exits = 0
 
 func _ready():
 	# Inizializza i contatori
-	if sensor_left:
-		last_left_entries = sensor_left.get_vehicle_count()
-	if sensor_right:
-		last_right_entries = sensor_right.get_vehicle_count()
-	if traffic_light_left:
-		last_left_exits = traffic_light_left.get_exit_count()
-	if traffic_light_right:
-		last_right_exits = traffic_light_right.get_exit_count()
-
 	start_traffic_system()
 
 func _process(_delta: float) -> void:
@@ -53,11 +43,12 @@ func _process(_delta: float) -> void:
 			vehicle.queue_free()
 
 	# Controlla sempre le entrate, ma le uscite solo durante le fasi attive
-	check_entries()
-	if current_active_phase == TrafficPhase.LEFT:
-		check_exits(TrafficPhase.LEFT)
-	elif current_active_phase == TrafficPhase.RIGHT:
-		check_exits(TrafficPhase.RIGHT)
+
+
+	#if current_active_phase == TrafficPhase.LEFT:
+		#check_exits(TrafficPhase.LEFT)
+	#elif current_active_phase == TrafficPhase.RIGHT:
+		#check_exits(TrafficPhase.RIGHT)
 
 	TrafficManager.traffic_lights_infos["left"]["color"] = traffic_light_left.current_light
 	TrafficManager.traffic_lights_infos["right"]["color"] = traffic_light_right.current_light
@@ -83,6 +74,9 @@ func traffic_cycle():
 		var current_arrivals_right = sensor_right.get_vehicle_count()
 		var waiting_left = max(0, current_arrivals_left - traffic_light_right.get_exit_count())
 		var waiting_right = max(0, current_arrivals_right - traffic_light_left.get_exit_count())
+
+		if current_active_phase == TrafficPhase.NONE:
+			check_entries(waiting_left, waiting_right)
 
 		print("Conteggio AGGIORNATO - Sinistra: ", waiting_left, " Destra: ", waiting_right)
 		print("  Arrivi totali sinistra: ", current_arrivals_left)
@@ -139,6 +133,7 @@ func traffic_cycle():
 
 func execute_phase(phase: TrafficPhase, allocated_time: float):
 	var phase_name = "SINISTRA" if phase == TrafficPhase.LEFT else "DESTRA"
+	@warning_ignore("unused_variable")
 	var signal_direction = "-ztoz" if phase == TrafficPhase.LEFT else "zto-z"
 	var traffic_info_key = "left" if phase == TrafficPhase.LEFT else "right"
 
@@ -160,6 +155,7 @@ func execute_phase(phase: TrafficPhase, allocated_time: float):
 	active_light.update_lights()
 	inactive_light.update_lights()
 
+
 	var green_duration = 0.0
 	var time_without_new_exits = 0.0
 	var last_exit_count = exit_light.get_exit_count()
@@ -180,9 +176,15 @@ func execute_phase(phase: TrafficPhase, allocated_time: float):
 
 		# Monitoraggio situazione dell'altro lato
 		var other_arrivals = other_sensor.get_vehicle_count()
-		var other_waiting = max(0, other_arrivals - other_exit_light.get_exit_count())
+		var other_waiting = max(0, other_arrivals)
+
 
 		TrafficManager.traffic_lights_infos[traffic_info_key]["time"] = allocated_time - green_duration
+
+		if phase == TrafficPhase.LEFT:
+			check_entries(current_waiting, other_waiting)
+		else:
+			check_entries(other_waiting, current_waiting)
 
 		print("Verde ", phase_name.to_lower(), " - ", green_duration, "/", allocated_time, "s")
 		print("  Arrivi AGGIORNATI ", phase_name.to_lower(), ": ", current_arrivals)
@@ -221,11 +223,11 @@ func execute_phase(phase: TrafficPhase, allocated_time: float):
 	print("Veicoli processati totali: ", exit_light.get_exit_count() - initial_exit_count)
 
 	# Reset del contatore delle uscite per il lato attivo
-	exit_light.reset_exit_count()
-	arrival_sensor.reset_count()
 
 	# *** FASE GIALLA ***
 	await execute_yellow_phase(phase)
+	exit_light.reset_exit_count()
+	arrival_sensor.reset_count()
 
 func execute_yellow_phase(phase: TrafficPhase):
 	var phase_name = "SINISTRA" if phase == TrafficPhase.LEFT else "DESTRA"
@@ -251,43 +253,33 @@ func execute_yellow_phase(phase: TrafficPhase):
 
 	print("Fase gialla ", phase_name.to_lower(), " completata")
 
-func check_entries():
-	# Controlla nuovi ingressi da SINISTRA (sensore sinistro rileva -z to z)
-	var current_left_entries = sensor_left.get_vehicle_count()
-	if current_left_entries > last_left_entries:
-		var new_entries = current_left_entries - last_left_entries
-		for i in range(new_entries):
-			TrafficManager.emit_signal("vehicle_entered", "-ztoz")
-			print("Segnale: veicolo entrato da SINISTRA (-ztoz)")
-		last_left_entries = current_left_entries
+func check_entries(waiting_left, waiting_right):
+	# Calcola i veicoli in attesa da SINISTRA
+	#var current_arrivals_left = sensor_left.get_vehicle_count()
+	#var waiting_left = max(0, current_arrivals_left - traffic_light_right.get_exit_count())
+	TrafficManager.emit_signal("vehicle_entered", "-ztoz", waiting_left)
 
-	# Controlla nuovi ingressi da DESTRA (sensore destro rileva z to -z)
-	var current_right_entries = sensor_right.get_vehicle_count()
-	if current_right_entries > last_right_entries:
-		var new_entries = current_right_entries - last_right_entries
-		for i in range(new_entries):
-			TrafficManager.emit_signal("vehicle_entered", "zto-z")
-			print("Segnale: veicolo entrato da DESTRA (zto-z)")
-		last_right_entries = current_right_entries
+	# Calcola i veicoli in attesa da DESTRA
+	#var current_arrivals_right = sensor_right.get_vehicle_count()
+	#var waiting_right = max(0, current_arrivals_right - traffic_light_left.get_exit_count())
+	TrafficManager.emit_signal("vehicle_entered", "zto-z", waiting_right)
 
-func check_exits(phase: TrafficPhase):
-	if phase == TrafficPhase.LEFT:
-		# Durante la fase sinistra, controlliamo le uscite dal semaforo DESTRO
-		# (i veicoli da sinistra che escono attraverso il semaforo destro)
-		var current_right_exits = traffic_light_right.get_exit_count()
-		if current_right_exits > last_right_exits:
-			var new_exits = current_right_exits - last_right_exits
-			for i in range(new_exits):
-				TrafficManager.emit_signal("vehicle_exited", "-ztoz")
-				print("Segnale: veicolo da SINISTRA uscito (-ztoz)")
-			last_right_exits = current_right_exits
-	else: # TrafficPhase.RIGHT
-		# Durante la fase destra, controlliamo le uscite dal semaforo SINISTRO
-		# (i veicoli da destra che escono attraverso il semaforo sinistro)
-		var current_left_exits = traffic_light_left.get_exit_count()
-		if current_left_exits > last_left_exits:
-			var new_exits = current_left_exits - last_left_exits
-			for i in range(new_exits):
-				TrafficManager.emit_signal("vehicle_exited", "zto-z")
-				print("Segnale: veicolo da DESTRA uscito (zto-z)")
-			last_left_exits = current_left_exits
+#func check_exits(phase: TrafficPhase):
+	#if phase == TrafficPhase.LEFT:
+		## Durante la fase sinistra, controlliamo le uscite dal semaforo DESTRO
+		#var current_left_exits = traffic_light_right.get_exit_count()
+		#if current_left_exits > last_left_exits:
+			#var new_exits = current_left_exits - last_left_exits
+			#for i in range(new_exits):
+				#TrafficManager.emit_signal("vehicle_exited", "-ztoz")
+				#print("Segnale: veicolo da SINISTRA uscito (-ztoz)")
+			#last_left_exits = current_left_exits
+	#else: # TrafficPhase.RIGHT
+		## Durante la fase destra, controlliamo le uscite dal semaforo SINISTRO
+		#var current_right_exits = traffic_light_left.get_exit_count()
+		#if current_right_exits > last_right_exits:
+			#var new_exits = current_right_exits - last_right_exits
+			#for i in range(new_exits):
+				#TrafficManager.emit_signal("vehicle_exited", "zto-z")
+				#print("Segnale: veicolo da DESTRA uscito (zto-z)")
+			#last_right_exits = current_right_exits

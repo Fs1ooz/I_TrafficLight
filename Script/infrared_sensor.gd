@@ -1,5 +1,6 @@
 extends Node3D
 class_name InfraredSensor
+
 @onready var raycast_A: RayCast3D = $InfraredA
 @onready var raycast_B: RayCast3D = $InfraredB
 @export var associated_traffic_light: TrafficLight
@@ -35,7 +36,6 @@ func _physics_process(delta: float) -> void:
 				if last_trigger == "A":
 					var vehicle = raycast_B.get_collider()
 					if vehicle not in vehicles_detected:
-
 						vehicles_detected.append(vehicle)
 			"zto-z":
 				if last_trigger == "B":
@@ -52,12 +52,11 @@ func _physics_process(delta: float) -> void:
 	if vehicles_detected.size() > 50:
 		vehicles_detected = vehicles_detected.slice(-30)
 	vehicle_count = vehicles_detected.size()
-
-
+	#printerr("Arrivano da ", "sinistra "  if sensor_direction == "-ztoz" else "destra ", vehicle_count, " veicoli")
 
 func get_vehicle_count() -> int:
 	return vehicle_count
 
 func reset_count():
-	vehicle_count = 0
+	push_warning("Resettati veicoli da ", "sinistra" if sensor_direction == "-ztoz" else "destra")
 	vehicles_detected.clear()

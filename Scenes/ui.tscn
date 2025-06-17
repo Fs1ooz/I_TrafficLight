@@ -30,6 +30,7 @@ text = "Veicoli da sinistra"
 [node name="VehicleCounterA" type="Label" parent="LeftV"]
 layout_mode = 2
 theme = ExtResource("2_qdvrb")
+horizontal_alignment = 2
 
 [node name="RightV" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -168,5 +169,5 @@ offset_bottom = 31.0
 grow_horizontal = 2
 text = "CLEAR"
 
-[connection signal="pressed" from="Panel/Button" to="." method="_on_spawn_pressed"]
+[connection signal="pressed" from="Panel/Button" to="." method="on_spawn_pressed"]
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
