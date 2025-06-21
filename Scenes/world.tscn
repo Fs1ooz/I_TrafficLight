@@ -20,6 +20,7 @@ size = Vector2(2.985, 3.385)
 
 [node name="World" type="Node3D" node_paths=PackedStringArray("sensor_left", "sensor_right", "traffic_light_left", "traffic_light_right")]
 script = ExtResource("1_go701")
+time_scale = 2.0
 sensor_left = NodePath("InfraredSensorA")
 sensor_right = NodePath("InfraredSensorB")
 traffic_light_left = NodePath("TrafficLightA")
@@ -74,3 +75,5 @@ metadata/_editor_floor_ = Vector3(0, 0, 0)
 
 [node name="UI" parent="CanvasLayer" node_paths=PackedStringArray("vehicle_spawner") instance=ExtResource("6_5ukr8")]
 vehicle_spawner = NodePath("../../VehiclesSpawner")
+
+[editable path="InfraredSensorA"]

@@ -20,7 +20,7 @@ func _process(delta: float) -> void:
 	time_1.text = str(traffic_light_infos["left"]["time"]).left(4)
 	time_2.text = str(traffic_light_infos["right"]["time"]).left(4)
 
-func on_spawn_pressed():
+func on_spawn_pressed() -> void:
 	var left_count = int(left_input.value)
 	var right_count = int(right_input.value)
 	spawn_machines(left_count, right_count)
@@ -36,7 +36,7 @@ func on_button_pressed() -> void:
 		vehicle.queue_free()
 	get_tree().reload_current_scene()
 
-func vehicle_entered(direction: String, current_entries: int):
+func vehicle_entered(direction: String, current_entries):
 	# Mostra il numero di veicoli in attesa (già calcolato correttamente nel TrafficController)
 	match direction:
 		"-ztoz":

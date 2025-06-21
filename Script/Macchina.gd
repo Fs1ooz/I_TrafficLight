@@ -1,6 +1,6 @@
 extends CharacterBody3D
 
-@export var speed: float = 10.0
+@export var speed: float = randf_range(10.0, 12.0)
 @export var slow_speed: float = 1.0
 @export var stop_threshold: float = 5.0
 @export var car_stop_distance: float = 3.8

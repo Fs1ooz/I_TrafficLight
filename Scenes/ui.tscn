@@ -95,6 +95,7 @@ text = "\"Time\""
 horizontal_alignment = 1
 
 [node name="Panel" type="Panel" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
